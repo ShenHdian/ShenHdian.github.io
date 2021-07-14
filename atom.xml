@@ -3,11 +3,11 @@
   <title>豌豆羊</title>
   
   <subtitle>豆吃羊，羊不吃豆</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://shenhdou.top/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="https://shenhdou.top/"/>
   <updated>2021-07-14T11:09:04.044Z</updated>
-  <id>http://example.com/</id>
+  <id>https://shenhdou.top/</id>
   
   <author>
     <name>ShenHdian</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/2021/07/14/hello-world/"/>
-    <id>http://example.com/2021/07/14/hello-world/</id>
+    <link href="https://shenhdou.top/2021/07/14/hello-world/"/>
+    <id>https://shenhdou.top/2021/07/14/hello-world/</id>
     <published>2021-07-14T11:09:04.044Z</published>
     <updated>2021-07-14T11:09:04.044Z</updated>
     
