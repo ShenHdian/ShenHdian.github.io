@@ -88,12 +88,19 @@
 
   
   <url>
-    <loc>https://shenhdou.top/tags/%E5%88%9B%E4%BD%9C/</loc>
+    <loc>https://shenhdou.top/tags/%E5%B0%8F%E8%AF%B4/</loc>
     <lastmod>2021-07-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
 
+  
+  <url>
+    <loc>https://shenhdou.top/categories/%E5%88%9B%E4%BD%9C/</loc>
+    <lastmod>2021-07-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
   
 </urlset>
