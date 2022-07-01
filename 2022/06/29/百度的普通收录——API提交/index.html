@@ -22,21 +22,24 @@
     var CONFIG = {"hostname":"shenhdou.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="把本地的代码上传到gitee上 前提 我想把我的学习内容上传到指定的Gitee仓库时，突然发现了这个问题。如何把本地的代码上传到Gitee上。以往的我只知道通过浏览器拽上去，现在通过git工具链接仓库，用代码管理上传。">
+  <meta name="description" content="引出  百度站长的网站收录是一件很糟心的事情，刚开始我以为只用将自己的网址给收录就行了。结果根本在百度引擎上搜索不到我的文章，于是我就想着自己把自己网站的内容手动上传给百度。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="把本地的代码上传到gitee上">
-<meta property="og:url" content="https://shenhdou.top/2022/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/index.html">
+<meta property="og:title" content="百度的普通收录——API提交">
+<meta property="og:url" content="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/index.html">
 <meta property="og:site_name" content="豌豆羊">
-<meta property="og:description" content="把本地的代码上传到gitee上 前提 我想把我的学习内容上传到指定的Gitee仓库时，突然发现了这个问题。如何把本地的代码上传到Gitee上。以往的我只知道通过浏览器拽上去，现在通过git工具链接仓库，用代码管理上传。">
+<meta property="og:description" content="引出  百度站长的网站收录是一件很糟心的事情，刚开始我以为只用将自己的网址给收录就行了。结果根本在百度引擎上搜索不到我的文章，于是我就想着自己把自己网站的内容手动上传给百度。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shenhdou.top/2022/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629143638061.png">
-<meta property="article:published_time" content="2022-06-29T05:41:20.000Z">
-<meta property="article:modified_time" content="2022-06-29T06:46:29.964Z">
+<meta property="og:image" content="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629230601896.png">
+<meta property="og:image" content="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629230639486.png">
+<meta property="og:image" content="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629230730045.png">
+<meta property="og:image" content="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629230817731.png">
+<meta property="article:published_time" content="2022-06-29T15:00:54.000Z">
+<meta property="article:modified_time" content="2022-06-29T15:16:42.891Z">
 <meta property="article:author" content="ShenHdian">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://shenhdou.top/2022/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629143638061.png">
+<meta name="twitter:image" content="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220629230601896.png">
 
-<link rel="canonical" href="https://shenhdou.top/2022/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/">
+<link rel="canonical" href="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/">
 
 
 <script id="page-configurations">
@@ -49,7 +52,7 @@
   };
 </script>
 
-  <title>把本地的代码上传到gitee上 | 豌豆羊</title>
+  <title>百度的普通收录——API提交 | 豌豆羊</title>
   
 
 
@@ -199,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shenhdou.top/2022/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/">
+    <link itemprop="mainEntityOfPage" href="https://shenhdou.top/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -212,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          把本地的代码上传到gitee上
+          百度的普通收录——API提交
         </h1>
 
         <div class="post-meta">
@@ -223,7 +226,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-06-29 13:41:20 / 修改时间：14:46:29" itemprop="dateCreated datePublished" datetime="2022-06-29T13:41:20+08:00">2022-06-29</time>
+              <time title="创建时间：2022-06-29 23:00:54 / 修改时间：23:16:42" itemprop="dateCreated datePublished" datetime="2022-06-29T23:00:54+08:00">2022-06-29</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,7 +244,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>430</span>
+              <span>1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -260,27 +263,133 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>把本地的代码上传到gitee上</strong></p>
-<p><strong>前提</strong></p>
-<p>我想把我的学习内容上传到指定的Gitee仓库时，突然发现了这个问题。如何把本地的代码上传到Gitee上。以往的我只知道通过浏览器拽上去，现在通过git工具链接仓库，用代码管理上传。</p>
+        <p> <strong>引出</strong> </p>
+<p>百度站长的网站收录是一件很糟心的事情，刚开始我以为只用将自己的网址给收录就行了。结果根本在百度引擎上搜索不到我的文章，于是我就想着自己把自己网站的内容手动上传给百度。</p>
 <span id="more"></span>
 
-<p><strong>步骤</strong></p>
-<p>1、打开存放代码的文件夹–在文件夹内右键</p>
-<p><img src="/2022/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/06/29/%E6%8A%8A%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E5%88%B0gitee%E4%B8%8A/Users/15574\AppData\Roaming\Typora\typora-user-images\image-20220629143638061.png" alt="image-20220629143638061"></p>
-<p>2、初始化本地仓库，命令</p>
-<p><code>git init</code></p>
-<p>3、设置用户名和邮箱</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name</span><br><span class="line">git config --global user.email</span><br></pre></td></tr></table></figure>
-
-<p>4、链接Gitee仓库</p>
-<p><code>git remote add origin https://gitee.com/xxxxx</code></p>
-<p>5、拉取仓库中的代码（可以只提交、不下载到本地）</p>
-<p><code>git pull --rebase origin master</code></p>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a><strong>步骤</strong></h3><h4 id="①普通收录，接口调用地址"><a href="#①普通收录，接口调用地址" class="headerlink" title="①普通收录，接口调用地址"></a>①普通收录，接口调用地址</h4><p><img src="/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574\AppData\Roaming\Typora\typora-user-images\image-20220629230601896.png" alt="image-20220629230601896"></p>
+<h4 id="②创建urls-txt文件"><a href="#②创建urls-txt文件" class="headerlink" title="②创建urls.txt文件"></a>②创建urls.txt文件</h4><p><img src="/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574\AppData\Roaming\Typora\typora-user-images\image-20220629230639486.png" alt="image-20220629230639486"></p>
+<h4 id="③上传至百度"><a href="#③上传至百度" class="headerlink" title="③上传至百度"></a>③上传至百度</h4><p>百度给了多个推送示例，我选择了curl推送</p>
+<p><img src="/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574\AppData\Roaming\Typora\typora-user-images\image-20220629230730045.png" alt="image-20220629230730045"></p>
+<p>截图如下：</p>
+<p><code>curl -H &#39;Content-Type:text/plain&#39; --data-binary @urls.txt &quot;http://data.zz.baidu.com/urls?*site*=https://shenhdou.top&amp;*token*=iq5UPWN2rOJfIHjR&quot;</code></p>
+<p><img src="/2022/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/06/29/%E7%99%BE%E5%BA%A6%E7%9A%84%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%E2%80%94%E2%80%94API%E6%8F%90%E4%BA%A4/Users/15574\AppData\Roaming\Typora\typora-user-images\image-20220629230817731.png" alt="image-20220629230817731"></p>
+<p>若推送成功则会返回</p>
+<p>{</p>
+<p>​    “remain”：2938 //还能够上传2938个API</p>
+<p>​    ”success“：48  //这次上传一共成功了48个API</p>
+<p>}</p>
+<h3 id="其他的推送反馈"><a href="#其他的推送反馈" class="headerlink" title="其他的推送反馈"></a><strong>其他的推送反馈</strong></h3><p>您可以通过推送后返回的状态码和字段来判断数据是否推送成功。</p>
+<ol>
+<li><h4 id="状态码为200，表示推送成功，可能返回以下字段："><a href="#状态码为200，表示推送成功，可能返回以下字段：" class="headerlink" title="状态码为200，表示推送成功，可能返回以下字段："></a>状态码为200，表示推送成功，可能返回以下字段：</h4></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>是否必选</th>
+<th>参数类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>success</td>
+<td>是</td>
+<td>int</td>
+<td>成功推送的url条数</td>
+</tr>
+<tr>
+<td>remain</td>
+<td>是</td>
+<td>int</td>
+<td>当天剩余的可推送url条数</td>
+</tr>
+<tr>
+<td>not_same_site</td>
+<td>否</td>
+<td>array</td>
+<td>由于不是本站url而未处理的url列表</td>
+</tr>
+<tr>
+<td>not_valid</td>
+<td>否</td>
+<td>array</td>
+<td>不合法的url列表</td>
+</tr>
+</tbody></table>
+<p> 成功返回示例：<br>{<br>  “remain”:4999998,<br>  “success”:2,<br>  “not_same_site”:[],<br>  “not_valid”:[]<br>}</p>
+<ol start="2">
+<li><h4 id="状态码为4XX或500-表示推送失败，返回字段有："><a href="#状态码为4XX或500-表示推送失败，返回字段有：" class="headerlink" title="状态码为4XX或500,表示推送失败，返回字段有："></a>状态码为4XX或500,表示推送失败，返回字段有：</h4></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="center">字段</th>
+<th align="center">是否必选</th>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">error</td>
+<td align="center">是</td>
+<td align="center">int</td>
+<td align="left">错误码，与状态码相同</td>
+</tr>
+<tr>
+<td align="center">message</td>
+<td align="center">是</td>
+<td align="center">string</td>
+<td align="left">错误描述</td>
+</tr>
+</tbody></table>
+<p>常见的推送失败返回示例说明：</p>
+<table>
+<thead>
+<tr>
+<th align="center">error</th>
+<th>message</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">400</td>
+<td>site error</td>
+<td align="left">站点未在站长平台验证</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td>empty content</td>
+<td align="left">post内容为空</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td>only 2000 urls are allowed once</td>
+<td align="left">每次最多只能提交2000条链接</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td>over quota</td>
+<td align="left">超过每日配额了，超配额后再提交都是无效的</td>
+</tr>
+<tr>
+<td align="center">401</td>
+<td>token is not valid</td>
+<td align="left">token错误</td>
+</tr>
+<tr>
+<td align="center">404</td>
+<td>not found</td>
+<td align="left">接口地址填写错误</td>
+</tr>
+<tr>
+<td align="center">500</td>
+<td>internal error, please try later</td>
+<td align="left">服务器偶然异常，通常重试就会成功</td>
+</tr>
+</tbody></table>
 <hr>
-<p><strong>管理仓库</strong></p>
-<p>①<code>git status</code><br>查看当前状态，是否和远程仓库的内容是同步的；如果不同步，先pull下来，再下一步；</p>
-<p>同步则下一步；<br>②<code>git add</code><br>添加所有文件||可指定文件<br>③<code>git commit -m</code> “提交信息”<br>添加提交说明<br>④<code>git push</code></p>
+<p>个人邮箱：<a href="mailto:&#49;&#53;&#x35;&#x37;&#x34;&#x33;&#x38;&#48;&#x32;&#55;&#x33;&#x40;&#49;&#54;&#51;&#x2e;&#x63;&#x6f;&#x6d;">&#49;&#53;&#x35;&#x37;&#x34;&#x33;&#x38;&#48;&#x32;&#55;&#x33;&#x40;&#49;&#54;&#51;&#x2e;&#x63;&#x6f;&#x6d;</a></p>
 
     </div>
 
@@ -299,7 +408,10 @@
     <a href="/2022/03/25/%E5%85%B3%E4%BA%8Ecategories%E5%90%8E%E5%B0%91%E4%B8%80%E4%B8%AA%E7%A9%BA%E6%A0%BC%EF%BC%8C%E4%BB%A5%E8%87%B3%E4%BA%8E%E6%97%A0%E6%B3%95%E6%9B%B4%E6%96%B0blogs/" rel="prev" title="关于categories后少一个空格，以至于无法更新blogs">
       <i class="fa fa-chevron-left"></i> 关于categories后少一个空格，以至于无法更新blogs
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/01/%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0Gitee/" rel="next" title="本地代码上传Gitee">
+      本地代码上传Gitee <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -358,6 +470,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%91%A0%E6%99%AE%E9%80%9A%E6%94%B6%E5%BD%95%EF%BC%8C%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%E5%9C%B0%E5%9D%80"><span class="nav-number">1.1.</span> <span class="nav-text">①普通收录，接口调用地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%91%A1%E5%88%9B%E5%BB%BAurls-txt%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">②创建urls.txt文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%91%A2%E4%B8%8A%E4%BC%A0%E8%87%B3%E7%99%BE%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">③上传至百度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E6%8E%A8%E9%80%81%E5%8F%8D%E9%A6%88"><span class="nav-number">2.</span> <span class="nav-text">其他的推送反馈</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81%E4%B8%BA200%EF%BC%8C%E8%A1%A8%E7%A4%BA%E6%8E%A8%E9%80%81%E6%88%90%E5%8A%9F%EF%BC%8C%E5%8F%AF%E8%83%BD%E8%BF%94%E5%9B%9E%E4%BB%A5%E4%B8%8B%E5%AD%97%E6%AE%B5%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">状态码为200，表示推送成功，可能返回以下字段：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81%E4%B8%BA4XX%E6%88%96500-%E8%A1%A8%E7%A4%BA%E6%8E%A8%E9%80%81%E5%A4%B1%E8%B4%A5%EF%BC%8C%E8%BF%94%E5%9B%9E%E5%AD%97%E6%AE%B5%E6%9C%89%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">状态码为4XX或500,表示推送失败，返回字段有：</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -373,7 +486,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">49</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -430,12 +543,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">13k</span>
+    <span title="站点总字数">14k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12 分钟</span>
+    <span title="站点阅读时长">13 分钟</span>
 </div>
 
         
