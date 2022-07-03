@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next-1.JPG">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/ss.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shenhdou.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Fluxion攻击，又称钓鱼攻击。 原理：将路由器枪毙，使之不能够有效地连接网络。同时我们创建一个一模一样的WiFi，用于用户的连接。用户连接上时，需要重新输入WiFi密码，如此一来便钓鱼成功。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kali攻击WiFi、攻击密码Fluxion（二）">
+<meta property="og:url" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="豌豆羊">
+<meta property="og:description" content="Fluxion攻击，又称钓鱼攻击。 原理：将路由器枪毙，使之不能够有效地连接网络。同时我们创建一个一模一样的WiFi，用于用户的连接。用户连接上时，需要重新输入WiFi密码，如此一来便钓鱼成功。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220701214452939.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703184245305.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190144838.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190352677.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190541602.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190735688.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190759807.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190828899.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190907747.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191050270.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191331242.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191434305.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191518339.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191554109.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191612592.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191644828.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191722984.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191749251.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191824629.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192234097.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192324508.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192346895.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192406421.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192459999.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192617132.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192943836.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193104708.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193321825.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193517220.png">
+<meta property="og:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193536879.png">
+<meta property="article:published_time" content="2022-07-01T06:07:25.000Z">
+<meta property="article:modified_time" content="2022-07-03T11:57:40.282Z">
+<meta property="article:author" content="ShenHdian">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/Users/15574/AppData/Roaming/Typora/typora-user-images/image-20220701214452939.png">
+
+<link rel="canonical" href="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kali攻击WiFi、攻击密码Fluxion（二） | 豌豆羊</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="豌豆羊" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">豌豆羊</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">豆吃羊，羊不吃豆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shenhdou.top/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ShenHdian">
+      <meta itemprop="description" content="记录学习、记录感悟、记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="豌豆羊">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kali攻击WiFi、攻击密码Fluxion（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-01 14:07:25" itemprop="dateCreated datePublished" datetime="2022-07-01T14:07:25+08:00">2022-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-03 19:57:40" itemprop="dateModified" datetime="2022-07-03T19:57:40+08:00">2022-07-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> Fluxion攻击，又称钓鱼攻击。</p>
+<p>原理：将路由器枪毙，使之不能够有效地连接网络。同时我们创建一个一模一样的WiFi，用于用户的连接。用户连接上时，需要重新输入WiFi密码，如此一来便钓鱼成功。</p>
+<span id="more"></span>
+
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>钓鱼攻击，听起来钓鱼的成功率应该不低，但是在实战过程中会遇到很多问题。</p>
+<ol>
+<li>在创建邪恶的双胞胎时，我们要先获得该WiFi的握手包（handshake包）。</li>
+</ol>
+<p>当我们尝试获得握手包时，我们会遇到：</p>
+<ul>
+<li><p>是否有人正在连接该WiFi，若没有人连接，则放弃攻击；</p>
+</li>
+<li><p>有人连接WiFi，我们就可以尝试攻击该用户，使之断连而不得不重新连接WiFi。</p>
+</li>
+</ul>
+<p>（但是有些路由器具有很强的抗干扰性，我们是通过不断地发送ACK帧来导致用户重连，一旦接受了多个来自同一设备的ACK帧时，便会“自动忽略”后面的帧）</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/Users\15574\AppData\Roaming\Typora\typora-user-images\image-20220701214452939.png" alt="ACK帧被忽略"></p>
+<p>换而言之，现在的路由器功能越来越强大，攻击的难度越来越强大。攻击的工具倒是没什么进步，连抓包都很有可能抓到无效的包。</p>
+<blockquote>
+<p>所以遇到能抓到包的路由器，且行且珍惜吧。</p>
+</blockquote>
+<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><h2 id="1-安装fluxion"><a href="#1-安装fluxion" class="headerlink" title="1. 安装fluxion"></a>1. 安装fluxion</h2><p>右键打开终端输入 <code>git clone https://www.github.com/FluxionNetwork/fluxion.git</code></p>
+<p>随后进入fluxion文件夹打开终端，用<code>./fluxion</code>运行fluxion，会发现有多个依赖没有安装。</p>
+<p>用<code>./fluxion -i</code>下载所需的依赖。</p>
+<blockquote>
+<p>注：若下载依赖失败，可以更换一下kali源</p>
+</blockquote>
+<h2 id="2-换源"><a href="#2-换源" class="headerlink" title="2. 换源"></a>2. 换源</h2><ol>
+<li><h4 id="安装leafpad：apt-get-install-leafpad（注意要root身份）"><a href="#安装leafpad：apt-get-install-leafpad（注意要root身份）" class="headerlink" title="安装leafpad：apt-get install leafpad（注意要root身份）"></a>安装leafpad：<code>apt-get install leafpad</code>（注意要root身份）</h4></li>
+<li><h4 id="输入命令：leafpad-etc-apt-sources-list"><a href="#输入命令：leafpad-etc-apt-sources-list" class="headerlink" title="输入命令：leafpad /etc/apt/sources.list"></a>输入命令：<code>leafpad /etc/apt/sources.list</code></h4><p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703184245305.png" alt="image-20220703184245305"></p>
+</li>
+<li><h4 id="从以下的源中选一个进去，我选择的是阿里的源："><a href="#从以下的源中选一个进去，我选择的是阿里的源：" class="headerlink" title="从以下的源中选一个进去，我选择的是阿里的源："></a>从以下的源中选一个进去，我选择的是阿里的源：</h4></li>
+</ol>
+<p> #kali官方源</p>
+<pre><code>deb http://http.kali.org/kali kali-rolling main non-free contrib
+</code></pre>
+<p>#中科大的源</p>
+<pre><code>deb http://mirrors.ustc.edu.cn/kali kali-rolling main non-free contrib
+
+deb-src http://mirrors.ustc.edu.cn/kali kali-rolling main non-free contrib
+</code></pre>
+<p>#阿里云源</p>
+<pre><code>deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib
+
+deb http://mirrors.aliyun.com/kali-security/ kali-rolling main contrib non-free
+
+deb-src http://mirrors.aliyun.com/kali-security/ kali-rolling main contrib non-free
+</code></pre>
+<ol start="4">
+<li><h4 id="输入以下命令即可（一般输入前两个）"><a href="#输入以下命令即可（一般输入前两个）" class="headerlink" title="输入以下命令即可（一般输入前两个）"></a>输入以下命令即可（一般输入前两个）</h4></li>
+</ol>
+<p><code>apt-get update</code> //更新索引文件</p>
+<p><code>apt-get upgrade</code> //更新软件包</p>
+<p><code>apt-get dist-upgrade</code> //更新系统版本**(一般不需要执行，如果你对新版本软件的需求不是那么迫切，可以不执行）**</p>
+<h2 id="3-操作"><a href="#3-操作" class="headerlink" title="3.操作"></a>3.操作</h2><p>安装好fluxion工具之后，下一步就开始操作。</p>
+<p><code>./fluxion.sh</code>打开fluxion</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190144838.png" alt="image-20220703190144838"></p>
+<p>先选择【2】，Handshake Snooper</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190352677.png" alt="image-20220703190352677"></p>
+<p>选择【3】扫描所有信道（2.4GHz &amp; 5Ghz）</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190541602.png" alt="image-20220703190541602"></p>
+<p>扫描到各个信道的WiFi之后，<code>Ctrl+C</code>退出搜索框</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190735688.png" alt="image-20220703190735688"></p>
+<p>输入序号32</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190759807.png" alt="image-20220703190759807"></p>
+<p>选择【2】跳过</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190828899.png" alt="image-20220703190828899"></p>
+<p>选择【1】恢复攻击</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703190907747.png" alt="image-20220703190907747"></p>
+<p>选择【2】aireplay-ng解除认证方式</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191050270.png" alt="image-20220703191050270"></p>
+<p>这一步要等待不短的时间，具体速度跟路由器，已经是否有个正在连接这个WiFi有关。</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191331242.png" alt="image-20220703191331242"></p>
+<p>出现这个窗口的时候，获取握手包就成功了，我们进入下一步。</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191434305.png" alt="image-20220703191434305"></p>
+<p>选择【1】，我们要重新启动攻击方式</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191518339.png" alt="image-20220703191518339"></p>
+<p>选择【1】创建一个“邪恶的双胞胎”接入点</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191554109.png" alt="image-20220703191554109"></p>
+<p>【2】跳过</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191612592.png" alt="image-20220703191612592"></p>
+<p>【2】重置攻击</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191644828.png" alt="image-20220703191644828"></p>
+<p>【2】wlan0，选择自己的RT2870/RT3070的网卡</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191722984.png" alt="image-20220703191722984"></p>
+<p>【1】mdk4</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191749251.png" alt="image-20220703191749251"></p>
+<p>【1】流氓AP -hostapd（推荐）</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703191824629.png" alt="image-20220703191824629"></p>
+<p>【1】cowpatty</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192234097.png" alt="image-20220703192234097"></p>
+<p>填入握手包的绝对路径，如果是通过fluxion获得握手包，这个地方会自动填入。</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192324508.png" alt="image-20220703192324508"></p>
+<p>【2】cowpatty验证</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192346895.png" alt="image-20220703192346895"></p>
+<p>【1】创建SSL证书</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192406421.png" alt="image-20220703192406421"></p>
+<p>【1】断开原网络</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192459999.png" alt="image-20220703192459999"></p>
+<p>选择【3】Chinese，这是一个伪装的页面，之后就会开启钓鱼的页面。</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192617132.png" alt="image-20220703192617132"></p>
+<p>这个时候，连接这个WiFi的设备会被攻击，并且会自动连上我们创建的虚假同名WiFi<strong>（但是我尝试下来，基本没啥用，只有自己主动连接才有可能连接上；手机无法连接WiFi的时候，会自动换成移动流量，只能寄希望于其他的设备，类似于电脑平板之类的，可能能够连接到同名的WiFi</strong>）</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703192943836.png" alt="image-20220703192943836"></p>
+<p>会出现如下图的情况，如果我们攻击的WiFi路由器很强，aireplay攻击不是一时半会儿就能把路由器干掉的。等着把，祈求梦想，或者换个网卡。</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193104708.png" alt="image-20220703193104708"></p>
+<p>连接上虚假WiFi的页面如上图。</p>
+<p>若有用户输入密码后，kali上的密码端口就会有反应（如下图）</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193321825.png" alt="image-20220703193321825"></p>
+<p>出了密码之后，可以去fluxion的文件夹中查看</p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193517220.png" alt="image-20220703193517220"></p>
+<p><img src="/2022/07/01/kali%E6%94%BB%E5%87%BBWiFi%E3%80%81%E6%94%BB%E5%87%BB%E5%AF%86%E7%A0%81%EF%BC%88%E4%BA%8C%EF%BC%89/image-20220703193536879.png" alt="image-20220703193536879"></p>
+<p>至此，攻击结束。</p>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>钓鱼攻击的成功率真的很感人，你得分析你攻击这个WiFi的人，他什么时候在家，他家路由器是啥牌子攻破的可能性大不大，他家用不用电脑平板或者其他的可以连接WiFi的设备。</p>
+<p>就比如有人家中有小米大礼包，你检索他家WiFi发现有好多设备都在连接，结果个个都是小米设备连接的，根本抓不到包。</p>
+<p>还是就是抓到握手包也很有可能其中都是无效数据。（可以通过Elcomsoft Password Recovery判断一下）</p>
+<h1 id="Windows下跑包软件——ewsa-wifipr"><a href="#Windows下跑包软件——ewsa-wifipr" class="headerlink" title="Windows下跑包软件——ewsa||wifipr"></a>Windows下跑包软件——ewsa||wifipr</h1><p>其实跑包和钓鱼两种攻击WiFi的方式都需要获取握手包，但是在kali系统下，我发现他们抓到握手包之后是不会检查其中数据是否有效的，所以跑包没必要在kali系统下跑，可以转到Windows下用其他软件来跑。</p>
+<p>像有两种ewsa和wifipr，目前只试过ewsa。最后附上ewsa的下载链接。</p>
+<h1 id="密码本的生成"><a href="#密码本的生成" class="headerlink" title="密码本的生成"></a>密码本的生成</h1><p>介于很多人家里的WiFi都是手机密码，虽然我唯一跑包跑出来的密码还是他自己的名字。生成一个可靠的密码本也是相当重要的。这里共享一下一个字典生成器，自己去构造字典本。</p>
+<h1 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h1><p>「WiFi破解与密码本」等文件 <a target="_blank" rel="noopener" href="https://www.aliyundrive.com/s/SSkgDtKooUm">https://www.aliyundrive.com/s/SSkgDtKooUm</a> 提取码: 30eb 点击链接保存，或者复制本段内容，打开「阿里云盘」APP ，无需下载极速在线查看，视频原画倍速播放。</p>
+<hr>
+<p>若有相关问题需要询问，电联咨询<a href="mailto:&#x31;&#53;&#53;&#x37;&#52;&#x33;&#x38;&#48;&#x32;&#x37;&#x33;&#64;&#x31;&#54;&#x33;&#x2e;&#99;&#x6f;&#x6d;">&#x31;&#53;&#53;&#x37;&#52;&#x33;&#x38;&#48;&#x32;&#x37;&#x33;&#64;&#x31;&#54;&#x33;&#x2e;&#99;&#x6f;&#x6d;</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/07/01/%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0Gitee/" rel="prev" title="本地代码上传Gitee">
+      <i class="fa fa-chevron-left"></i> 本地代码上传Gitee
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85fluxion"><span class="nav-number">2.1.</span> <span class="nav-text">1. 安装fluxion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%8D%A2%E6%BA%90"><span class="nav-number">2.2.</span> <span class="nav-text">2. 换源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85leafpad%EF%BC%9Aapt-get-install-leafpad%EF%BC%88%E6%B3%A8%E6%84%8F%E8%A6%81root%E8%BA%AB%E4%BB%BD%EF%BC%89"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">安装leafpad：apt-get install leafpad（注意要root身份）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%91%BD%E4%BB%A4%EF%BC%9Aleafpad-etc-apt-sources-list"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">输入命令：leafpad &#x2F;etc&#x2F;apt&#x2F;sources.list</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E4%BB%A5%E4%B8%8B%E7%9A%84%E6%BA%90%E4%B8%AD%E9%80%89%E4%B8%80%E4%B8%AA%E8%BF%9B%E5%8E%BB%EF%BC%8C%E6%88%91%E9%80%89%E6%8B%A9%E7%9A%84%E6%98%AF%E9%98%BF%E9%87%8C%E7%9A%84%E6%BA%90%EF%BC%9A"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">从以下的源中选一个进去，我选择的是阿里的源：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E4%BB%A5%E4%B8%8B%E5%91%BD%E4%BB%A4%E5%8D%B3%E5%8F%AF%EF%BC%88%E4%B8%80%E8%88%AC%E8%BE%93%E5%85%A5%E5%89%8D%E4%B8%A4%E4%B8%AA%EF%BC%89"><span class="nav-number">2.2.0.4.</span> <span class="nav-text">输入以下命令即可（一般输入前两个）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%93%8D%E4%BD%9C"><span class="nav-number">2.3.</span> <span class="nav-text">3.操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">3.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Windows%E4%B8%8B%E8%B7%91%E5%8C%85%E8%BD%AF%E4%BB%B6%E2%80%94%E2%80%94ewsa-wifipr"><span class="nav-number">4.</span> <span class="nav-text">Windows下跑包软件——ewsa||wifipr</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%86%E7%A0%81%E6%9C%AC%E7%9A%84%E7%94%9F%E6%88%90"><span class="nav-number">5.</span> <span class="nav-text">密码本的生成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD"><span class="nav-number">6.</span> <span class="nav-text">下载</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ShenHdian"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">ShenHdian</p>
+  <div class="site-description" itemprop="description">记录学习、记录感悟、记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ShenHdian/ShenHdian.github.io/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ShenHdian&#x2F;ShenHdian.github.io&#x2F;" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/15574380273@163.com" title="E-Mail → 15574380273@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ShenHdian</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">16k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">15 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
